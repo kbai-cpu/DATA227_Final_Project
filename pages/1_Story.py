@@ -1,6 +1,7 @@
 import streamlit as st
 import altair as alt
 import pandas as pd
+import json
 import sys
 import os
 
@@ -13,6 +14,7 @@ from charts.charts import (
     chart_feature_importance_pop,
     chart_ridge_and_deviation,
     chart_audio_popularity_scatter,
+    chart_choropleth,
     chart_vis4_reentry,
 )
 
@@ -63,9 +65,26 @@ def load_all_data():
     features_clean.loc[features_clean['track_id'] == '0VjIjW4GlUZAMYd2vXMi3b', 'danceability'] = 0.9
     features_clean.loc[features_clean['track_id'] == '0VjIjW4GlUZAMYd2vXMi3b', 'valence'] = 0.83
 
-    return top20_songs, us_data_20, top6_data, top500_full, genre_density_data, features_clean
+    top6_choropleth = pd.read_csv('all_data/top6.csv', parse_dates=['date'])
+    with open('all_data/custom.geo.json') as f:
+        world_geojson = json.load(f)
+    world_df = pd.DataFrame(world_geojson['features'])
+    world_df['name'] = world_df['properties'].apply(lambda x: x['name'])
+    world_df['pop'] = world_df['properties'].apply(lambda x: x['pop_est'])
+    top6_choropleth.loc[top6_choropleth['region'] == 'Czech Republic', 'region'] = 'Czechia'
+    top6_choropleth.loc[top6_choropleth['region'] == 'Dominican Republic', 'region'] = 'Dominican Rep.'
+    top6_choropleth.loc[top6_choropleth['region'] == 'United States', 'region'] = 'United States of America'
+    top6_choropleth = top6_choropleth[['title', 'date', 'region', 'streams']]
+    song_streams_by_country = top6_choropleth.groupby(['title', 'region', 'date'])['streams'].sum().reset_index()
+    song_streams_by_country = song_streams_by_country.merge(world_df[['name', 'pop']], left_on='region', right_on='name', how='left')
+    song_streams_by_country = song_streams_by_country.drop(columns=['name'])
+    song_streams_by_country['streams_per_capita'] = ((song_streams_by_country['streams'] / song_streams_by_country['pop']) * 100000).round(2)
+    song_streams_by_country = song_streams_by_country.dropna()
+    song_streams_by_country.rename(columns={'region': 'name'}, inplace=True)
 
-top20_songs, us_data_20, top6_data, top500_full, genre_density_data, features_clean = load_all_data()
+    return top20_songs, us_data_20, top6_data, top500_full, genre_density_data, features_clean, song_streams_by_country, world_geojson
+
+top20_songs, us_data_20, top6_data, top500_full, genre_density_data, features_clean, song_streams_by_country, world_geojson = load_all_data()
 
 # ── Story ─────────────────────────────────────────────────────────────────────
 
@@ -216,9 +235,7 @@ st.write(
     with **pop** highlighted in red.
     """
 )
-_, center_col_genre, _ = st.columns([1.2, 10, 0.5])
-with center_col_genre:
-    st.altair_chart(chart_genre_importance_and_density(genre_density_data), use_container_width=False)
+st.altair_chart(chart_genre_importance_and_density(genre_density_data), use_container_width=False)
 st.caption(
     "**Left:** Pop's regression coefficient dwarfs every other genre — being pop is a structural "
     "advantage before a single note is heard. "
@@ -396,7 +413,28 @@ st.write(
     """
 )
 
-st.header("8) The re-entry fingerprint: how BL kept coming back")
+st.header("8) A global phenomenon: how BL spread across the world")
+st.write(
+    """
+    Streaming dominance isn't just about one market. The charts below compare *Blinding Lights*
+    against the other top hits on a per-capita basis — normalizing streams by each country's
+    population so that smaller countries aren't drowned out by large ones. Use the dropdown to
+    select a comparison song, and click and drag on the timeline to zoom into any time window.
+    The maps update to reflect the selected period.
+    """
+)
+st.altair_chart(chart_choropleth(song_streams_by_country, world_geojson), use_container_width=True)
+st.caption(
+    "**How to read this:** Darker shading = more streams per 100,000 people. "
+    "The left column shows the selected comparison song; the right column always shows *Blinding Lights*. "
+    "Takeaway: BL achieved dense penetration across Europe, North America, and Latin America simultaneously — "
+    "a geographic spread that most hits, even massive ones, rarely match. "
+    "Its consistent global footprint, sustained over multiple years rather than a single viral moment, "
+    "is the geographic signature of a song with true cultural staying power."
+)
+
+st.header("9) The re-entry fingerprint: how BL kept coming back")
+
 st.write(
     """
     Every song eventually falls off the charts. What made *Blinding Lights* different wasn't just

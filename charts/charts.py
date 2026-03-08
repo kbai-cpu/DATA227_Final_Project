@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
+import json
 from sklearn.preprocessing import StandardScaler
 import statsmodels.api as sm
 
@@ -655,6 +656,122 @@ def chart_audio_popularity_scatter(top500_full):
     ).resolve_scale(y='shared')
 
     return alt.vconcat(legend, scatter, spacing=16).configure_view(stroke=None)
+
+
+# ── Visualization 8: Choropleth ───────────────────────────────────────────────
+
+def chart_choropleth(song_streams_by_country, world_geojson):
+    brush = alt.selection_interval(encodings=['x'])
+    song_list = ['Dance Monkey', 'Shape of You', 'Someone You Loved', 'Sunflower - Spider-Man: Into the Spider-Verse', 'bad guy']
+    song_dropdown = alt.binding_select(options=song_list, name="Select Song: ")
+    song_select = alt.selection_point(fields=['title'], bind=song_dropdown, value=song_list[0])
+
+    other_line = alt.Chart(song_streams_by_country).mark_line(
+        point=alt.OverlayMarkDef(size=20, filled=True)
+    ).transform_filter(
+        song_select
+    ).encode(
+        x=alt.X('date:T', title='Timeline'),
+        y=alt.Y('mean(streams_per_capita):Q', title='Avg Streams per 100k Population'),
+        color=alt.condition(
+            brush,
+            alt.Color('mean(streams_per_capita):Q', title='Avg Streams/100k'),
+            alt.value('lightgray')
+        )
+    ).add_params(
+        song_select,
+        brush
+    ).properties(
+        title='Average Streaming Trends (Selected Song)',
+        width=350,
+        height=250
+    )
+
+    bl_line = alt.Chart(song_streams_by_country).mark_line(
+        point=alt.OverlayMarkDef(size=20, filled=True)
+    ).transform_filter(
+        alt.datum.title == 'Blinding Lights'
+    ).encode(
+        x=alt.X('date:T', title='Timeline'),
+        y=alt.Y('mean(streams_per_capita):Q', title='Avg Streams per 100k Population'),
+        color=alt.condition(
+            brush,
+            alt.Color('mean(streams_per_capita):Q', scale=alt.Scale(scheme='reds'), title='Avg Streams/100k'),
+            alt.value('lightgray')
+        )
+    ).add_params(
+        brush
+    ).properties(
+        title='Average Streaming Trends (Blinding Lights)',
+        width=350,
+        height=250
+    )
+
+    def make_background():
+        return alt.Chart(
+            alt.Data(values=world_geojson, format=alt.DataFormat(property='features'))
+        ).mark_geoshape(
+            fill='lightgray',
+            stroke='white'
+        ).properties(
+            width=350,
+            height=250
+        ).project('equalEarth')
+
+    other_choropleth = alt.Chart(song_streams_by_country).transform_filter(
+        brush
+    ).transform_filter(
+        song_select
+    ).transform_aggregate(
+        mean_spc='mean(streams_per_capita)',
+        groupby=['name']
+    ).transform_lookup(
+        lookup='name',
+        from_=alt.LookupData(
+            data=alt.Data(values=world_geojson, format=alt.DataFormat(property='features')),
+            key='properties.name'
+        ),
+        as_='geo'
+    ).mark_geoshape().encode(
+        shape='geo:G',
+        color=alt.Color('mean_spc:Q', title='Avg Streams/100k'),
+        tooltip=['name:N', alt.Tooltip('mean_spc:Q', format='.2f', title='Avg Streams')]
+    ).project('equalEarth')
+
+    bl_choropleth = alt.Chart(song_streams_by_country).transform_filter(
+        alt.datum.title == 'Blinding Lights'
+    ).transform_filter(
+        brush
+    ).transform_aggregate(
+        mean_spc='mean(streams_per_capita)',
+        groupby=['name']
+    ).transform_lookup(
+        lookup='name',
+        from_=alt.LookupData(
+            data=alt.Data(values=world_geojson, format=alt.DataFormat(property='features')),
+            key='properties.name'
+        ),
+        as_='geo'
+    ).mark_geoshape().encode(
+        shape='geo:G',
+        color=alt.Color('mean_spc:Q', scale=alt.Scale(scheme='reds'), title='Avg Streams/100k'),
+        tooltip=['name:N', alt.Tooltip('mean_spc:Q', format='.2f', title='Avg Streams')]
+    ).project('equalEarth')
+
+    other_map = (make_background() + other_choropleth).properties(title='Global Stream Density (Selected Song)')
+    bl_map = (make_background() + bl_choropleth).properties(title='Global Stream Density (Blinding Lights)')
+
+    return alt.concat(other_map, bl_map, other_line, bl_line, columns=2).properties(
+        title=alt.TitleParams(
+            text='Spotify Global Streams: Comparing Top 6 Hits',
+            subtitle='Visualizing Blinding Lights vs Selected Popular Songs',
+            anchor='middle',
+            fontSize=22,
+            subtitleFontSize=14
+        )
+    ).configure_view(
+        stroke=None
+    )
 
 
 # ── Visualization 9: Re-entry chart ──────────────────────────────────────────

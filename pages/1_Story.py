@@ -31,7 +31,7 @@ st.markdown("""
 
 alt.data_transformers.disable_max_rows()
 
-# ── Data loading ──────────────────────────────────────────────────────────────
+#  Data loading
 
 @st.cache_data
 def load_all_data():
@@ -86,9 +86,9 @@ def load_all_data():
 
 top20_songs, us_data_20, top6_data, top500_full, genre_density_data, features_clean, song_streams_by_country, world_geojson = load_all_data()
 
-# ── Story ─────────────────────────────────────────────────────────────────────
+# Story
 
-st.title("The Anatomy of a Streaming Hit")
+st.title("The Anatomy of a Mega-Hit")
 st.markdown(
     "**Central question:** *What separates a mega-hit from just a popular song on Spotify — "
     "and do total stream counts tell the whole story?*"
@@ -96,59 +96,40 @@ st.markdown(
 
 st.write(
     """
-    Between 2017 and 2021, Spotify published daily Top 200 charts across dozens of countries,
-    capturing the collective listening habits of hundreds of millions of users. In that span,
-    a small cohort of songs accumulated streams in the billions. But raw stream counts are a blunt
-    instrument: they conflate a song that briefly went viral with one that held its ground for
-    *years*. To understand what truly made a song dominant, we need to look at both dimensions —
-    how much it was streamed, and how it moved through the charts over time.
+    We start with the most obvious question: who actually led the charts? From there, the story
+    moves in layers — from raw chart dominance, to how hits decay over time, to how far they
+    travel globally, to what genre and audio features predict about success — all building toward
+    a closer look at Blinding Lights — the most-streamed song in Spotify history,
+    and the centerpiece of this analysis.
     """
 )
 
-st.header("1) Who dominated the charts?")
+st.header("1) Who Dominated the Charts?")
 st.write(
     """
-    The bar chart below ranks the 20 most-streamed songs globally. All rank trajectories start
-    gray — click any bar to highlight that song in color. Use the mini-chart at the bottom
-    to zoom into a specific time window.
+    The bar chart below ranks the 20 most-streamed songs globally. It is accompanied by a rank
+    trajectory chart — showing how each song moved through the U.S. Top 200 over time. All bars
+    and rank trajectories start gray — click any bar to highlight that song in color and see its
+    corresponding rank trajectory. Use the brush selection at the bottom to zoom into a specific
+    time window.
     """
 )
 st.altair_chart(chart_vis1_top20_streams(top20_songs, us_data_20), use_container_width=True)
-st.caption(
-    "Takeaway: **Blinding Lights** leads the pack by a wide margin — but look at its rank "
-    "trajectory. While most hits spike quickly then fade below the top 50, Blinding Lights "
-    "maintained a near-top-10 position in the U.S. for well over a year. Total streams reward "
-    "longevity just as much as peak popularity."
-)
 
-st.header("2) What the numbers obscure")
 st.write(
     """
-    The mean stream count (red dashed line) sits around 1.4 billion streams. Notice that most
-    songs in the top 20 cluster near or below that threshold, while a few — Blinding Lights,
-    Shape of You, Dance Monkey — pull far ahead. This concentration at the top is not random:
-    it reflects algorithmic amplification, playlist placement, and the compounding effect of
-    sustained chart presence. A song that stays in the top 50 for 18 months accumulates streams
-    in ways that a two-week viral moment simply cannot match.
-    """
-)
-st.write(
-    """
-    The rank trajectory chart makes this visible. Songs like *Someone You Loved* show a sharp
-    initial rise followed by a steep drop — a classic viral arc. *Blinding Lights*, by contrast,
-    exhibits multiple peaks and a remarkably slow decay, suggesting repeated cultural moments
-    (sync placements, social media trends, algorithmic re-recommendations) kept it circulating
-    long after its release.
+    This first visualization is meant to be primarily exploratory. The data is there to interact with, and the patterns across the top 20 are for discovering on your
+    own terms. A few observations about Blinding Lights specifically are worth noting, however:
+
+    - **Blinding Lights is the most-streamed song in the dataset, sitting at around 2.4 billion total streams** — and its rank trajectory
+      reflects why: rather than peaking and fading, it holds near the top of the U.S. chart
+      for an unusually sustained stretch.
+    - **The red dashed mean line puts the distribution in perspective.** Most songs in the top 20
+      cluster near or below it, while a select few, including Blinding Lights, pulls ahead by a wide margin, skewing the mean upward. This concentration at the top is not random: it reflects algorithmic amplification, playlist placement, and the compounding effect of sustained chart presence. A song that stays in the top 50 for 18 months accumulates streams in ways that a two-week viral moment simply cannot match.
     """
 )
 
-st.info(
-    "In the next section, we isolate what made *Blinding Lights* structurally different — "
-    "comparing its decay curve directly against the other top songs to see whether its longevity "
-    "was truly exceptional or just a matter of scale."
-)
-
-st.header("3) The decay curve: does every hit fade at the same rate?")
+st.header("2) The decay curve: does every hit fade at the same rate?")
 st.write(
     """
     To isolate what made *Blinding Lights* structurally different, we normalize each song's
@@ -158,75 +139,83 @@ st.write(
     """
 )
 st.altair_chart(chart_vis2_decay_curve(top6_data), use_container_width=True)
-st.caption(
-    "Takeaway: Every peer song drops below rank 100 within roughly 200–400 days and never "
-    "recovers. **Blinding Lights** (red) does dip — but repeatedly resurfaces near the top 50, "
-    "sustaining chart presence for over 700 days. This is the fingerprint of a song that kept "
+st.write(
+    "Many peer songs (Shape of You, bad guy, Dance Monkey) drop below rank 50 within roughly 200–400 days and never recover. "
+    "Blinding Lights (red) does dip — but repeatedly resurfaces near the top 50, "
+    "sustaining chart presence for over 600 days. This is the fingerprint of a song that kept "
     "finding new audiences rather than simply exhausting its initial one."
 )
 
+st.header("3) What the Numbers Alone Obscure")
 st.write(
     """
-    What drives that kind of resilience? The short answer is re-entry events: moments when a
-    song re-enters cultural circulation long after its original release. For *Blinding Lights*,
-    these included a viral TikTok fitness trend, prominent sync placements, and Spotify's own
-    algorithmic re-recommendations triggered each time its streaming velocity picked up. The
-    decay curve is the signature of a song that algorithmic and cultural forces kept pulling
-    back to the surface — something its peers simply did not experience at the same scale.
+    Stream counts and rank trajectories tell us that Blinding Lights dominated — but they don't
+    tell us *why*. From the two charts above, we can observe that it outstreamed its peers and held
+    the charts far longer than many comparable hits. What we cannot yet explain is what made it so
+    structurally different in the first place.
+
+    To answer that, we need to look beyond the numbers and into the music itself. This is where
+    the analysis pivots: from observing dominance to trying to explain it. Specifically, we turn
+    to audio features — measurable sonic attributes like tempo, danceability, energy, and valence
+    — and genre, and ask whether Blinding Lights occupies an unusual corner of the musical
+    landscape relative to other hits.
     """
 )
+st.info(
+    "Blinding Lights' longevity, chart dominance, and global resonance raise a central question: "
+    "what truly separates it from the other top songs of its time? "
+    "From here, the analysis centers on that question, using genre and audio features "
+    "to understand not just what made it successful, but what made it stand apart."
+)
 
-st.header("4) What predicts chart success? Genre matters more than sound")
+st.header("4) Across all songs, what predicts chart success?")
 st.write(
     """
-    The decay curve revealed that *Blinding Lights* endured where its peers faded. But what
-    actually drives a song's popularity in the first place — is it sonic qualities alone, or
-    something else entirely? To find out, we ran a **multiple linear regression** on the top
-    500 most-streamed songs, including both audio features and genre. The result is striking:
-    **genre dominates**. Knowing what genre a song belongs to predicts its popularity score
+    What actually drives a song's popularity in the first place? Is it sonic qualities alone, or
+    something else entirely? To find out, we ran a **multiple linear regression** on the
+    top 1% most-streamed songs (roughly 500 tracks), including both audio features and genre. The result is striking:
+    **genre dominates**. Knowing what genre a song belongs to predicts its popularity score far
     more reliably than any individual audio quality.
 
     To keep the chart readable, all genre dummy coefficients are collapsed into a single
-    **genre** bar representing the most impactful genre dummy's magnitude.
+    bar representing the most impactful genre dummy's magnitude.
     """
 )
 _, center_col2, _ = st.columns([1, 3, 1])
 with center_col2:
     st.altair_chart(chart_feature_importance_genre(top500_full), use_container_width=False)
 st.caption(
-    "**How to read this:** Red bars are audio features; the genre bar shows the maximum "
+    "Red bars are audio features; the genre bar shows the maximum "
     "coefficient magnitude across the top 10 genre dummies. "
     "Because all predictors were standardized first, bar lengths are directly comparable."
+)
+st.info(
+    """
+    **A note on this model:** You might notice that some of the audio features sound like
+    they're measuring the same thing — for example, a loud song is almost always an energetic
+    song, and an acoustic song is almost always a quiet one. When two variables are this closely
+    related, it becomes difficult for the model to tell which one is actually driving popularity.
+    This is called multicollinearity, and it means the individual coefficients may be less
+    reliable to interpret on their own, even if the model as a whole is still making good predictions.
+
+    We're keeping all 7 features here because this is an exploratory, big-picture look —
+    we're not trying to make precise claims about each feature in isolation. We just want to
+    see the overall landscape. In the next section, when we zoom into pop songs specifically
+    and make more rigorous claims, we'll clean this up by removing the redundant features.
+    """
 )
 st.write(
     """
     **Key takeaways:**
-    - **Genre** is the single strongest predictor in the model — outranking every individual
-      audio feature. A song's genre carries substantially more information about its expected
-      popularity than tempo, energy, or loudness alone.
-    - Among audio features, **acousticness** and **loudness** have the most meaningful
-      relationships with popularity, suggesting mainstream hits lean toward produced,
-      loud sound over acoustic texture.
+    - Genre is the single strongest predictor in the model — outranking every individual
+      audio feature by an enormous margin. A song's genre carries substantially more information about its expected
+      popularity than features like tempo, energy, or loudness alone.
+    - Among audio features, valence and danceability have the most meaningful
+      relationships with popularity, suggesting mainstream hits lean toward upbeat, feel-good vibes and strong rhythmic qualities. 
     - This does not mean audio features are irrelevant — it means we need to study them
       on the right population. Genre is a confound: pop songs tend to score higher on
       popularity *and* share certain audio profiles, which inflates or distorts audio
       coefficients when all genres are pooled together.
-    """
-)
-st.info(
-    """
-    **A note on this model:** You might notice that some of these audio features sound like
-    they're measuring the same thing — for example, a loud song is almost always an energetic
-    song, and an acoustic song is almost always a quiet one. In statistics, when two ingredients
-    in your recipe are so similar that swapping one for the other barely changes the dish,
-    it becomes hard to tell which one is actually doing the work. This is called
-    **multicollinearity**, and it can make individual bar lengths less reliable to interpret
-    on their own.
-
-    We're keeping all 7 features here because this is an **exploratory, big-picture look** —
-    we're not trying to make precise claims about each feature in isolation. We just want to
-    see the overall landscape. In the next section, when we zoom into pop songs specifically
-    and make more rigorous claims, we'll clean this up by removing the redundant features.
     """
 )
 st.write(
@@ -237,45 +226,49 @@ st.write(
 )
 st.altair_chart(chart_genre_importance_and_density(genre_density_data), use_container_width=False)
 st.caption(
-    "**Left:** Pop's regression coefficient dwarfs every other genre — being pop is a structural "
-    "advantage before a single note is heard. "
+    "**Left:** Pop's regression coefficient is the largest of any genre variable: being classified as pop "
+    "is itself a strong positive predictor of popularity, independent of any audio features. "
     "**Right:** This advantage shows up directly in the raw data. Pop songs cluster visibly higher "
     "on the popularity axis than all other genres combined."
 )
 st.write(
     """
-    Pop is clearly the dominant genre. But this raises an important follow-up: thousands of pop
-    songs entered the Spotify Top 200 between 2017 and 2021 — most never came close to
-    *Blinding Lights*. So the real question is not just *"does being pop help?"* but
-    *"within pop, what actually separates the outliers from the rest?"*
+    Pop is clearly the dominant genre, and this is perhaps unsurprising, given that the majority
+    of top 20 songs in the dataset, including Blinding Lights itself, are classified as pop.
+    This analysis may have confirmed an initial belief you had that pop songs are structurally
+    advantaged in popularity metrics. After all, there is a reason the genre is called "pop."
+    But this raises an important follow-up: thousands of pop songs entered the Spotify Top 200
+    between 2017 and 2021 — most never came close to *Blinding Lights*. So the real question
+    is not just "does being pop help?" but "*within* pop, what actually separates the outliers
+    from the rest?"
 
     To answer that cleanly, we need to **control for genre** — and the right way to do that
     is not to drop genre from the model while keeping all songs pooled together. That approach
     leaves genre-driven variance in the residuals and can distort the audio feature coefficients.
-    Instead, we filter the dataset to **pop songs only** and re-run the regression on audio
-    features alone. By holding genre constant — studying a single genre — we isolate what sound
-    predicts *within* the pop ecosystem, on songs that have already cleared the genre hurdle.
+    Instead, we filter the dataset to pop songs **only** and re-run the regression on audio
+    features alone. By holding genre constant (studying a single genre), we can isolate what sound
+    predicts *within* the pop ecosystem itself.
     """
 )
 
-st.header("5) Within pop, what does sound predict?")
+st.header("5) Within Pop, What Does Sound Predict?")
 st.write(
     """
-    We filter the dataset to pop songs only and plan to run a **multiple linear regression**
-    on audio features. Before doing that, however, we need to address a methodological concern:
-    **multicollinearity**. If two predictors are highly correlated with each other, their
+    We filter the dataset to pop songs only and plan to run a multiple linear regression
+    on audio features. Before doing that, however, we need to address
+    multicollinearity within our data, a problem we pointed out earlier. If two predictors are highly correlated with each other, their
     individual coefficients become unreliable — the model can't cleanly separate their effects,
     and small changes in the data can swing the estimates dramatically.
 
     We ran a correlation matrix across all 7 audio features to check for problematic pairs.
     Three features form a highly collinear cluster:
-    - **Energy ↔ Loudness**: *r* = 0.76 — louder tracks are almost always more energetic by construction
+    - **Energy ↔ Loudness**: *r* = 0.76 — louder tracks are almost always more energetic 
     - **Energy ↔ Acousticness**: *r* = −0.73 — acoustic songs are systematically lower energy
     - **Loudness ↔ Acousticness**: *r* = −0.58 — a moderate but meaningful redundancy
 
     Keeping all three in the model would inflate standard errors and make the individual
-    coefficients difficult to interpret. We therefore **drop loudness and acousticness**,
-    retaining energy as the single representative of this dimension. The remaining five
+    coefficients difficult to interpret. We therefore drop **loudness** and **acousticness**,
+    keeping **energy** as the single representative of this dimension. The remaining five
     features — **tempo, energy, danceability, speechiness, and valence** — are sufficiently
     independent to produce stable estimates.
     """
@@ -284,16 +277,10 @@ _, center_col, _ = st.columns([1, 3, 1])
 with center_col:
     st.altair_chart(chart_feature_importance_pop(genre_density_data), use_container_width=False)
 st.caption(
-    "**How to read this:** Each bar shows how strongly a musical feature predicts popularity "
+    "Each bar shows how strongly a musical feature predicts popularity "
     "among pop songs specifically, after removing collinear predictors. All features are "
     "standardized, so bar lengths are directly comparable. Every observation is a pop song — "
     "genre is controlled for by design."
-)
-st.warning(
-    "⚠️ **TODO:** The explanatory text around this chart still uses statistical language "
-    "(multicollinearity, standardized coefficients, subgroup analysis) that will need to be "
-    "rewritten to be fully intuitive for a general audience — similar to what was done for "
-    "the section 4 note above."
 )
 st.write(
     """
@@ -301,107 +288,112 @@ st.write(
     These are the features we'll focus on when we zoom back into *Blinding Lights* — both
     individually and in combination.
 
-    And here's the thing: even before running any model, you could have made a reasonable
+    Even before running any model, you could have made a reasonable
     guess that these three would matter most. Think about what actually makes a song
     popular:
 
     - **Energy** is essentially how intense and exciting a song feels. High-energy songs
       keep people engaged, get played at parties and gyms, and are far less likely to be
-      skipped. A low-energy song might be beautiful — but it's also easy to tune out.
+      skipped. A low-energy song might be beautiful, but it's also easy to tune out.
     - **Danceability** captures how easy it is to move to a song. Songs people can dance
       to get played at social gatherings and clubs, they get picked up for workout
       playlists, and — critically for the streaming era — they go viral on TikTok and
       Instagram Reels. Every one of those contexts means more plays.
     - **Valence** measures how positive or happy a song sounds. People generally turn to
       music to feel good, which means upbeat, feel-good songs naturally get more repeat
-      listens. They also spread faster — a song that makes you feel something good is one
+      listens. They also spread faster. Asong that makes you feel something good is one
       you want to share.
 
-    Tempo and speechiness, by contrast, are more technical or genre-specific — they don't
+    Tempo and speechiness, by contrast, are more technical or genre-specific. They might not
     connect as directly to the emotional experience that drives someone to replay a song
-    or add it to a playlist. The model agreed.
+    or add it to a playlist. 
     """
 )
 
-st.header("6) So where does Blinding Lights actually fit?")
+st.header("6) So Where Does Blinding Lights Actually Fit?")
 st.write(
     """
-    The chart below shows the spread of each audio feature across the top 80 most-popular
-    songs on Spotify — think of each curve as a histogram smoothed into a wave. The taller
-    the curve at a given value, the more songs cluster there. The vertical line shows exactly
-    where a selected song lands on each feature. Use the dropdown to swap between songs and
-    see how their profiles compare.
+    The ridge plot below shows the distribution of each audio feature across the top 1% most
+    popular songs on Spotify. Each curve represents the density of songs at a given value:
+    the taller the curve, the more songs cluster there. The vertical line shows where a selected
+    song falls on each feature. Use the dropdown to swap between songs and compare their audio
+    profiles. The bar chart to the right summarizes how far that song sits from the average
+    on each feature. Bars extending right mean above average, bars extending left mean below.
     """
 )
 _, ridge_col = st.columns([0.3, 9.7])
 with ridge_col:
     st.altair_chart(chart_ridge_and_deviation(features_clean), use_container_width=False)
-st.caption(
-    "Use the **Select Song** dropdown above to compare any of the top songs. "
-    "Takeaway: *Blinding Lights* sits at the high end of tempo and danceability relative to its peers "
-    "(highlighted lines = above the top-80 average), while landing near the middle on energy and valence. "
-    "Its tempo is the sharpest outlier — faster than virtually every other mega-hit — and its high "
-    "danceability score explains its staying power across workout playlists, dance trends, and sync placements."
-)
-
-st.header("7) Pop got it through the door. Tempo kicked it through the ceiling.")
 st.write(
     """
-    We've answered the central question in layers. *Blinding Lights* dominated the charts with
-    unmatched longevity. Audio features — particularly its extreme tempo — marked it as a sonic
-    outlier among its peers. And genre, specifically pop, turned out to be the single strongest
-    predictor of popularity in the entire model.
+    **Takeaways:*
 
-    But here's the tension that demands a resolution: **if being a pop song is the dominant
-    driver of streaming success, why isn't every pop song Blinding Lights?** Thousands of pop
-    tracks entered the Spotify Top 200 between 2017 and 2021. Almost none sustained the kind
-    of cultural dominance BL did. Something else is at work.
+    - **Tempo:** Blinding Lights sits at the far right of the tempo distribution — faster than
+      virtually every other song in the top 1%. At 171 BPM, it is a genuine outlier, and this is
+      likely the single most unusual thing about its audio profile. That tempo is fast enough to anchor a workout routine, sync with TikTok fitness trends, and sustain momentum in a way most pop songs don't.
+    - **Danceability:** It also ranks among the most danceable songs in the dataset. Sitting at a value of 0.92, it's well above
+      the average danceability for top-tier hits. High danceability is what makes a song feel physically
+      irresistible: it invites movement, fits social contexts, and travels well across playlists
+      and platforms.
+    - **Valence:** Blinding Lights also lands on the highest end of the valence scale at 0.88, meaning it
+      sounds distinctly upbeat and feel-good. Songs with high valence are easier to return to,
+      easier to share, and more likely to be added to mood-based playlists, all of which
+      compound streaming numbers over time.
+    - **Energy and speechiness** are closer to the middle of the pack. Blinding Lights is
+      energetic but not unusually so relative to its peers, and its low speechiness reflects
+      that it is a sung track with minimal spoken or rap elements, typical of the genre.
 
-    The four charts below each plot a different audio dimension — **tempo**, **acousticness**,
-    **danceability**, and **valence** — against popularity. Gray points are non-pop songs.
-    Pink points are pop songs — and notice how even within the top 500 most-streamed songs
-    on the planet, the pink cluster sits visibly higher on the popularity axis than the gray one.
-    Being pop doesn't just help at the margins — it systematically elevates a song's ceiling.
-    Use the dropdown to select which song to highlight in red; the other two named songs are
-    always shown as gray triangles for comparison.
+    You can also compare Blinding Lights against Shape of You or
+    Someone You Loved, the next top two songs in terms of total streams, and see how differently their audio profiles are positioned across
+    the same distributions.
+    """
+)
+
+st.header("7) Seeing the Outlier: BL vs. the Full Pop Landscape")
+st.write(
+    """
+    The ridge plot confirmed that Blinding Lights is an outlier on tempo, danceability, and
+    valence within the top 1%. But those distributions include all genres. The scatterplots
+    below zoom out to the full top 1% and plot each audio feature directly against popularity
+    score, letting us see where Blinding Lights sits not just within the distribution,
+    but relative to every other song, pop or not.
+
+    Each panel plots one audio feature on the x-axis and popularity on the y-axis. **Gray points**
+    are non-pop songs; **pink points** are pop songs, and **dark red points** are the selected song. Use the **Select Song** dropdown to
+    highlight one of the three named songs in red while the other two stay visible as gray triangles
+    for comparison.
     """
 )
 st.altair_chart(chart_audio_popularity_scatter(top500_full), use_container_width=True)
-st.caption(
-    "Use the **Select Song** dropdown to highlight any of the three named songs in red; "
-    "the other two remain visible as gray triangles. "
-    "**Tempo**: at 171 BPM, BL sits far to the right of the pop cluster — faster than virtually every "
-    "other mega-hit, including *Shape of You* and *Someone You Loved*. "
-    "**Acousticness**: BL scores near zero, the signature of a fully electronic, synthesizer-driven "
-    "production. "
-    "**Danceability**: at 0.87, BL ranks among the most danceable songs in the dataset — a quality that "
-    "powered its viral fitness trend on TikTok. "
-    "**Valence**: BL sits on the higher end, sounding distinctly upbeat and feel-good in ways that "
-    "invite repeat listens and sharing. Together, these four dimensions show a pop song whose audio "
-    "profile is genuinely unusual among its peers."
+st.write(
+    """
+    A few things stand out. On popularity score alone, Blinding Lights is high, but not
+    dramatically separated from the rest of the pink cluster. Dozens of pop songs sit at a
+    similar level. If that were the whole story, BL would look like just another successful
+    pop track.
+
+    But look across the x-axes. On **tempo**, BL sits far to the right of almost everything
+    else — faster than *Shape of You*, faster than *Someone You Loved*, faster than the
+    vast majority of the pop cluster. On **danceability**, it ranks near the top of the entire
+    dataset. On **valence**, it skews upbeat relative to its peers. And on **acousticness**,
+    it scores near zero. This is the signature of a fully electronic, synthesizer-driven production
+    with no acoustic softness to dampen its momentum.
+    """
+)
+st.info(
+    "**A note on acousticness:** Acousticness was dropped from the pop regression model due to "
+    "its correlation with energy. It is included here as a descriptive feature because "
+    "Blinding Lights scores *exactly* zero — lower than every other song in the top 1% — "
+    "reflecting a fully electronic, synthesizer-driven production. That is worth noting "
+    "regardless of its predictive value in the model."
 )
 st.write(
     """
-    Look closely at the y-axis — the popularity score. *Blinding Lights* sits high, but it is
-    **not dramatically separated** from the rest of the pop cluster. Dozens of pop songs match
-    it or come within a few points on this axis. If you judged purely by popularity score,
-    you might conclude that BL is just one of many successful pop tracks. Nothing special.
-
-    And yet it is the single most-streamed song in the dataset — by a margin so wide that no
-    other title comes close. So what explains that gap, if not raw popularity score?
-
-    The answer is written across the x-axis. Look at where BL sits on **tempo**, **danceability**,
-    and **valence** relative to its pop peers — and even relative to *Shape of You* and *Someone
-    You Loved*, songs that were themselves massive global hits. BL is faster than almost
-    everything else. It is among the most danceable songs in the entire dataset. And it scores
-    high on valence — it sounds distinctly upbeat and feel-good, in a way that makes it easy
-    to return to, share, and play in social contexts.
-
-    That audio fingerprint is what unlocked the re-entry events we saw in the decay curve:
-    the TikTok fitness trend that required exactly that tempo and danceability to work,
-    the gym and workout playlists that kept circulating it, the sync placements that felt
-    inevitable for a song with that energy. Its peers may have matched it on popularity score.
-    They never matched it on the dimensions that made it *replayable*.
+    This combination: extreme tempo, high danceability, positive valence, zero acousticness, *could* be
+    what made it *replayable* in contexts its peers couldn't access: workout playlists,
+    TikTok fitness trends, sync placements that demanded exactly that energy. For example, Someone You Loved
+    is a slower, more acoustic, and less danceable song, which may have made it more likely to be added to "sad songs" playlists rather than "workout jams" or "TikTok hits," limiting its exposure in those high-velocity contexts.  In other words, BL's peers may
+    have matched it on popularity score, but not necessarily on the factors that kept pulling it back.
     """
 )
 
@@ -409,46 +401,71 @@ st.write(
     """
     Genre set the floor. Audio features set the ceiling. But neither fully explains how
     *Blinding Lights* stayed near the top for years — returning again and again long after
-    every comparable hit had faded. That final piece of the story is in the chart below.
+    every comparable hit had faded. That final piece of the story is in the charts below.
     """
 )
 
-st.header("8) A global phenomenon: how BL spread across the world")
+st.header("8) A Global Phenomenon: How BL Spread Across the World")
 st.write(
     """
     Streaming dominance isn't just about one market. The charts below compare *Blinding Lights*
-    against the other top hits on a per-capita basis — normalizing streams by each country's
+    against the other top hits on a per-capita basis, normalizing streams by each country's
     population so that smaller countries aren't drowned out by large ones. Use the dropdown to
     select a comparison song, and click and drag on the timeline to zoom into any time window.
     The maps update to reflect the selected period.
     """
 )
 st.altair_chart(chart_choropleth(song_streams_by_country, world_geojson), use_container_width=True)
-st.caption(
-    "**How to read this:** Darker shading = more streams per 100,000 people. "
-    "The left column shows the selected comparison song; the right column always shows *Blinding Lights*. "
-    "Takeaway: BL achieved dense penetration across Europe, North America, and Latin America simultaneously — "
-    "a geographic spread that most hits, even massive ones, rarely match. "
-    "Its consistent global footprint, sustained over multiple years rather than a single viral moment, "
-    "is the geographic signature of a song with true cultural staying power."
+st.write(
+    """
+    Across the top six most-streamed songs, global reach is a given: these tracks travel far
+    beyond their home markets, and each can spike to impressive peaks in per-capita listening.
+    But the dashboard makes a less conspicuous point about what actually builds an all-time hit.
+    Ed Sheeran's Shape of You briefly towers over the others with roughly 7.5 average streams
+    per capita at its height, while Blinding Lights never breaks 5 and arrives later, with
+    fewer calendar days to accumulate plays. And yet Blinding Lights ultimately out-streams
+    them all — suggesting that the real engine of a "true" top hit is not just its virality,
+    but its resilience.
+
+    If you focus on the tail rather than the peak, the picture shifts. Even once it settles
+    into its plateau, as all songs eventually do, Blinding Lights maintains its expansive,
+    steady footprint — drawing meaningful streams from a broad mix of countries long after the
+    initial spike has faded. Meanwhile, most of its peers do the opposite: their plateaus are
+    narrow, and the global reach that once defined their peak dims.
+    """
 )
 
-st.header("9) The re-entry fingerprint: how BL kept coming back")
+st.header("9) The Re-entry Fingerprint: How BL Kept Coming Back")
 
 st.write(
     """
-    Every song eventually falls off the charts. What made *Blinding Lights* different wasn't just
-    that it rose higher — it's that it kept coming back. The chart below maps every distinct
-    top-10 run for each of the top 20 songs on the U.S. chart. Each bar segment is a stretch of
-    consecutive days in the top 10; a gap of more than 14 days counts as a true exit and re-entry.
-    The number at the end of each row is the total run count.
+    Everything we have seen so far: the decay curve that never fully decayed, the global
+    footprint that outlasted its peers, the audio profile built for replayability, points to
+    the same underlying pattern: Blinding Lights did not just have a big moment. It had many.
+
+    The chart below makes that literal. Each row represents one of the top 20 most-streamed
+    songs on the U.S. chart. Each bar segment is a distinct stretch of consecutive days in the
+    top 10; a gap of more than 14 days counts as a true exit and re-entry. The number at the
+    end of each row is the total count of separate runs. Most songs have a single bar — one
+    continuous top-10 run that ends and never returns.
     """
 )
 st.altair_chart(chart_vis4_reentry(us_data_20), use_container_width=True)
-st.caption(
-    "Most songs have a single bar — one continuous top-10 run that ends and never returns. "
-    "**Blinding Lights** sits at the top with more distinct runs than any other song in the top 20, "
-    "its segments spread across a longer time window than any peer. This is not a song that had "
-    "one great moment. It had many."
+st.write(
+    """
+    Blinding Lights sits at the top: more distinct top-10 runs than any other song
+    in the top 20 (apart from Sunflower), spread across a longer time window compared to most of its peers. Each re-entry represents
+    a moment when the song found its way back into cultural circulation — perhaps a new TikTok trend, or an algorithmic recommendation triggered by a spike in streams. Its
+    extreme tempo made it a natural fit for fitness content. Its danceability kept it relevant
+    on social platforms. Its high valence made it easy to return to. These were not accidents:
+    they are the audio fingerprint of a song structurally built to resurface.
+
+    This is the final piece of the story. Total streams, chart longevity, distinct sonic profile, global reach, and
+    re-entry count all converge on the same answer: what separated Blinding Lights from
+    every other hit of its era was not a single exceptional quality, but the compounding
+    effect of many qualities working together over time.
+
+    The last section summarizes our findings and draws the narrative together.
+    """
 )
 

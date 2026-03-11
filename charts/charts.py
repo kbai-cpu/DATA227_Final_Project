@@ -8,7 +8,7 @@ from sklearn.preprocessing import StandardScaler
 import statsmodels.api as sm
 
 
-# ── Visualization 1: Top 20 streams + rank trajectories ───────────────────────
+# visualization 1: Top 20 songs by total streams + rank trajectory on U.S. chart
 
 def chart_vis1_top20_streams(top20_songs, us_data_20):
     avg = top20_songs['total_streams_mio'].mean()
@@ -101,7 +101,7 @@ def chart_vis1_top20_streams(top20_songs, us_data_20):
     return (bars_layered) | (rank_chart_us_smooth & overview)
 
 
-# ── Visualization 2: Decay curve ──────────────────────────────────────────────
+# visualization 2: Decay curve of top 6 songs in U.S. chart, with Blinding Lights highlighted
 
 def chart_vis2_decay_curve(top6_data):
     top6_data = top6_data[top6_data['days_since_debut'] <= 720].copy()
@@ -174,7 +174,7 @@ def chart_vis2_decay_curve(top6_data):
     )
 
 
-# ── Visualization 3: Feature importance with genre ────────────────────────────
+# visualization 3: Feature importance bars with genre as a single combined variable
 
 def chart_feature_importance_genre(top500_full):
     audio_features = ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'valence', 'tempo']
@@ -231,7 +231,7 @@ def chart_feature_importance_genre(top500_full):
     )
 
 
-# ── Visualization 4: Genre importance bars + density plot ────────────────────
+# visualization 4: Genre importance + density plot of popularity by genre
 
 def chart_genre_importance_and_density(genre_density_data):
     audio_features = ['danceability', 'energy', 'loudness', 'speechiness', 'acousticness', 'valence', 'tempo']
@@ -310,7 +310,7 @@ def chart_genre_importance_and_density(genre_density_data):
     return alt.hconcat(genre_chart, density_chart, spacing=60)
 
 
-# ── Visualization 5: Pop-only feature importance ──────────────────────────────
+# visualization 5: Feature importance bars within pop genre only
 
 def chart_feature_importance_pop(genre_density_data):
     audio_features = ['danceability', 'energy', 'speechiness', 'valence', 'tempo']
@@ -368,7 +368,7 @@ def chart_feature_importance_pop(genre_density_data):
     )
 
 
-# ── Visualization 6: Ridge plot + deviation chart ────────────────────────────
+# visualization 6: Ridge plot of audio feature distributions for top 1% songs, with deviation bars for selected song
 
 def chart_ridge_and_deviation(features_clean):
     features_of_interest = ['danceability', 'energy', 'speechiness', 'valence', 'tempo']
@@ -444,7 +444,7 @@ def chart_ridge_and_deviation(features_clean):
         )
     ).properties(
         title=alt.TitleParams(
-            text='Distribution of Musical Features — Top 0.01% Songs by Popularity',
+            text='Distribution of Musical Features — Top 1% Songs by Popularity',
             fontSize=16,
             anchor='middle'
         ),
@@ -501,7 +501,7 @@ def chart_ridge_and_deviation(features_clean):
         bar_color="datum.feature === 'tempo' ? (datum.deviation >= 0 ? '#c30010' : '#FFC30B') : datum.feature === 'danceability' ? '#FF6D00' : datum.feature === 'valence' ? '#FFD700' : '#cccccc'"
     ).mark_bar().encode(
         x=alt.X('deviation:Q',
-                title='Deviation from Top 0.01% Mean (normalized)',
+                title='Deviation from Top 1% Mean (normalized)',
                 axis=alt.Axis(format='.2f')),
         y=alt.Y('feature:N', sort='-x', title=None),
         color=alt.Color('bar_color:N', scale=None, legend=None),
@@ -519,7 +519,7 @@ def chart_ridge_and_deviation(features_clean):
         width=600,
         height=7 * step,
         title=alt.TitleParams(
-            text='Selected Song vs. Top 0.01% Average',
+            text='Selected Song vs. Top 1% Average',
             fontSize=14,
             anchor='middle'
         )
@@ -536,7 +536,7 @@ def chart_ridge_and_deviation(features_clean):
     )
 
 
-# ── Visualization 7: Audio feature vs. popularity scatterplots ───────────────
+# visualization 7: Scatter plots of audio features vs. popularity, with Blinding Lights + peers highlighted and selectable
 
 def chart_audio_popularity_scatter(top500_full):
     features = ['tempo', 'acousticness', 'danceability', 'valence']
@@ -658,7 +658,7 @@ def chart_audio_popularity_scatter(top500_full):
     return alt.vconcat(legend, scatter, spacing=16).configure_view(stroke=None)
 
 
-# ── Visualization 8: Choropleth ───────────────────────────────────────────────
+# visualization 8: Choropleth map of global streaming trends for Blinding Lights vs. selected peer songs, with linked timeline charts for each
 
 def chart_choropleth(song_streams_by_country, world_geojson):
     brush = alt.selection_interval(encodings=['x'])
@@ -774,7 +774,7 @@ def chart_choropleth(song_streams_by_country, world_geojson):
     )
 
 
-# ── Visualization 9: Re-entry chart ──────────────────────────────────────────
+# visualization 9: Gantt-style chart showing all top-10 runs for each song, with Blinding Lights highlighted and sorted by number of runs (U.S. Chart only)
 
 def chart_vis4_reentry(us_data_20):
     def get_top10_runs(group, gap_days=14):

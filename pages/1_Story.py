@@ -132,7 +132,7 @@ st.write(
 st.header("2) The decay curve: does every hit fade at the same rate?")
 st.write(
     """
-    To isolate what made *Blinding Lights* structurally different, we normalize each song's
+    To isolate what made Blinding Lights structurally different, we normalize each song's
     timeline by days since its U.S. chart debut — removing the distortion of different release
     dates and letting us compare decay curves directly. The five peer songs are the next
     highest-streamed titles globally; all were massive hits by any standard.
@@ -238,7 +238,7 @@ st.write(
     This analysis may have confirmed an initial belief you had that pop songs are structurally
     advantaged in popularity metrics. After all, there is a reason the genre is called "pop."
     But this raises an important follow-up: thousands of pop songs entered the Spotify Top 200
-    between 2017 and 2021 — most never came close to *Blinding Lights*. So the real question
+    between 2017 and 2021 — most never came close to Blinding Lights. So the real question
     is not just "does being pop help?" but "*within* pop, what actually separates the outliers
     from the rest?"
 
@@ -285,7 +285,7 @@ st.caption(
 st.write(
     """
     The top three predictors within pop are **energy**, **danceability**, and **valence**.
-    These are the features we'll focus on when we zoom back into *Blinding Lights* — both
+    These are the features we'll focus on when we zoom back into Blinding Lights — both
     individually and in combination.
 
     Even before running any model, you could have made a reasonable
@@ -400,7 +400,7 @@ st.write(
 st.write(
     """
     Genre set the floor. Audio features set the ceiling. But neither fully explains how
-    *Blinding Lights* stayed near the top for years — returning again and again long after
+    Blinding Lights stayed near the top for years — returning again and again long after
     every comparable hit had faded. That final piece of the story is in the charts below.
     """
 )
@@ -408,7 +408,7 @@ st.write(
 st.header("8) A Global Phenomenon: How BL Spread Across the World")
 st.write(
     """
-    Streaming dominance isn't just about one market. The charts below compare *Blinding Lights*
+    Streaming dominance isn't just about one market. The charts below compare Blinding Lights
     against the other top hits on a per-capita basis, normalizing streams by each country's
     population so that smaller countries aren't drowned out by large ones. Use the dropdown to
     select a comparison song, and click and drag on the timeline to zoom into any time window.

@@ -326,7 +326,7 @@ with ridge_col:
     st.altair_chart(chart_ridge_and_deviation(features_clean), use_container_width=False)
 st.write(
     """
-    **Takeaways:*
+    **Takeaways:**
 
     - **Tempo:** Blinding Lights sits at the far right of the tempo distribution — faster than
       virtually every other song in the top 1%. At 171 BPM, it is a genuine outlier, and this is

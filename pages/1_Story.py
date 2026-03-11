@@ -129,7 +129,7 @@ st.write(
     """
 )
 
-st.header("2) The decay curve: does every hit fade at the same rate?")
+st.header("2) The Decay Curve: Does Every Hit Fade at the Same Rate?")
 st.write(
     """
     To isolate what made Blinding Lights structurally different, we normalize each song's

@@ -155,7 +155,7 @@ st.write(
     structurally different in the first place.
 
     To answer that, we need to look beyond the numbers and into the music itself. This is where
-    the analysis pivots: from observing dominance to trying to explain it. Specifically, we turn
+    the analysis pivots: from observing patterns to trying to explain it. Specifically, we turn
     to audio features — measurable sonic attributes like tempo, danceability, energy, and valence
     — and genre, and ask whether Blinding Lights occupies an unusual corner of the musical
     landscape relative to other hits.

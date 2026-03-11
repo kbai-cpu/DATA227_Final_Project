@@ -373,7 +373,7 @@ st.write(
     pop track.
 
     But look across the x-axes. On **tempo**, BL sits far to the right of almost everything
-    else — faster than *Shape of You*, faster than *Someone You Loved*, faster than the
+    else — faster than Shape of You, faster than Someone You Loved, faster than the
     vast majority of the pop cluster. On **danceability**, it ranks near the top of the entire
     dataset. On **valence**, it skews upbeat relative to its peers. And on **acousticness**,
     it scores near zero. This is the signature of a fully electronic, synthesizer-driven production

@@ -51,6 +51,5 @@ st.write(
     "through its decay curve, unique audio profile, and sustained global chart dominance.\n"
     "- **Conclusion**: What the full picture tells us about how music achieves and sustains "
     "cultural dominance in the streaming era.\n"
-    "- **Explore**: Reader-driven tools for open-ended exploration of the data.\n"
 )
 

@@ -301,7 +301,7 @@ st.write(
       Instagram Reels. Every one of those contexts means more plays.
     - **Valence** measures how positive or happy a song sounds. People generally turn to
       music to feel good, which means upbeat, feel-good songs naturally get more repeat
-      listens. They also spread faster. Asong that makes you feel something good is one
+      listens. They also spread faster. A song that makes you feel something good is one
       you want to share.
 
     Tempo and speechiness, by contrast, are more technical or genre-specific. They might not
